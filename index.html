@@ -1,1032 +1,2252 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Клининг-Калькулятор - Прототип</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        /* Мобильный контейнер */
-        .mobile-frame {
-            width: 375px;
-            height: 812px;
-            background: #f8f9fa;
-            border-radius: 40px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Статус бар */
-        .status-bar {
-            height: 44px;
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 14px;
-            font-weight: 600;
-            position: relative;
-            z-index: 100;
-        }
-
-        .status-bar .time {
-            font-weight: 600;
-        }
-
-        .status-bar .icons {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        /* Header */
-        .app-header {
-            background: white;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #059669;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: #059669;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-        }
-
-        /* Контент */
-        .screen-content {
-            height: calc(100% - 44px - 60px);
-            overflow-y: auto;
-            background: #f8f9fa;
-        }
-
-        .screen {
-            display: none;
-            padding: 20px;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        /* Заголовки экранов */
-        .screen-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #1a1a1a;
-        }
-
-        .screen-subtitle {
-            font-size: 15px;
-            color: #6b7280;
-            margin-bottom: 24px;
-        }
-
-        /* Карточки */
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        /* Формы */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px;
-            background: #f9fafb;
-            transition: all 0.2s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #059669;
-            background: white;
-        }
-
-        .input-with-unit {
-            position: relative;
-        }
-
-        .input-unit {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        /* Селектор */
-        .selector {
-            background: #f9fafb;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .selector-item {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e5e7eb;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .selector-item:last-child {
-            border-bottom: none;
-        }
-
-        .selector-item.active {
-            background: #d1fae5;
-            color: #059669;
-            font-weight: 500;
-        }
-
-        /* Чекбоксы */
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .checkbox-item.checked {
-            background: #d1fae5;
-            border: 1px solid #059669;
-        }
-
-        .checkbox-item input {
-            width: 20px;
-            height: 20px;
-            accent-color: #059669;
-        }
-
-        /* Слайдер */
-        .slider-container {
-            margin-top: 10px;
-        }
-
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 8px;
-        }
-
-        .slider-labels .active {
-            color: #059669;
-            font-weight: 600;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #e5e7eb;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #059669;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
-        }
-
-        /* Автокомплит */
-        .autocomplete-list {
-            margin-top: 12px;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .autocomplete-item {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e5e7eb;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .autocomplete-item:last-child {
-            border-bottom: none;
-        }
-
-        .autocomplete-item:hover {
-            background: #f9fafb;
-        }
-
-        .autocomplete-icon {
-            color: #059669;
-            font-size: 18px;
-        }
-
-        .autocomplete-text {
-            flex: 1;
-        }
-
-        .autocomplete-title {
-            font-weight: 500;
-            color: #1a1a1a;
-        }
-
-        .autocomplete-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 2px;
-        }
-
-        /* Кнопки */
-        .btn-primary {
-            width: 100%;
-            padding: 18px;
-            background: #059669;
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 20px;
-        }
-
-        .btn-primary:hover {
-            background: #047857;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-secondary {
-            padding: 12px 24px;
-            background: white;
-            color: #059669;
-            border: 2px solid #059669;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #d1fae5;
-        }
-
-        /* Информационные блоки */
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .info-value {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .info-value.large {
-            font-size: 24px;
-            color: #059669;
-        }
-
-        /* Карточки исполнителей */
-        .executor-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .executor-card.best {
-            border-color: #059669;
-            background: #f0fdf4;
-        }
-
-        .executor-card.locked {
-            opacity: 0.5;
-            background: #f9fafb;
-        }
-
-        .executor-badge {
-            display: inline-block;
-            background: #059669;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .executor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .executor-name {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .executor-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #d1fae5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #059669;
-            font-size: 18px;
-        }
-
-        .executor-info h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .executor-rating {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #f59e0b;
-            font-size: 14px;
-        }
-
-        .executor-stats {
-            display: flex;
-            gap: 16px;
-            margin: 12px 0;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .executor-stats span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .executor-profit {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .profit-label {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .profit-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #059669;
-        }
-
-        .executor-card.locked .profit-value {
-            color: #9ca3af;
-        }
-
-        .lock-reason {
-            background: #f3f4f6;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 12px;
-        }
-
-        /* Нижняя навигация */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            color: #9ca3af;
-            transition: color 0.2s;
-        }
-
-        .nav-item.active {
-            color: #059669;
-        }
-
-        .nav-icon {
-            font-size: 24px;
-        }
-
-        .nav-label {
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        /* Утилиты */
-        .text-muted {
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .divider {
-            height: 1px;
-            background: #e5e7eb;
-            margin: 16px 0;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 24px 0 16px;
-            color: #1a1a1a;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            background: #d1fae5;
-            color: #059669;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Скроллбар */
-        .screen-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .screen-content::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 2px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чисто. — Управление клинингом</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #F5F6F8;
+    color: #1a1a1a;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 260px;
+    background: white;
+    border-right: 1px solid #E5E7EB;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: #2D7A5F;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+  }
+
+  .workspace-selector {
+    padding: 12px;
+    background: #F9FAFB;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid #E5E7EB;
+  }
+
+  .workspace-selector:hover {
+    background: #F3F4F6;
+  }
+
+  .workspace-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  .workspace-sub {
+    font-size: 12px;
+    color: #6B7280;
+  }
+
+  .sidebar-section {
+    padding: 16px 12px;
+  }
+
+  .sidebar-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding: 0 12px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #4B5563;
+    font-size: 14px;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover {
+    background: #F3F4F6;
+    color: #1a1a1a;
+  }
+
+  .nav-item.active {
+    background: #E8F3EE;
+    color: #2D7A5F;
+    font-weight: 600;
+  }
+
+  .nav-icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: #E5E7EB;
+    color: #6B7280;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 12px;
+    border-top: 1px solid #E5E7EB;
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  .user-profile:hover {
+    background: #F3F4F6;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #E8F3EE;
+    color: #2D7A5F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1a1a1a;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: #6B7280;
+  }
+
+  .main {
+    flex: 1;
+    margin-left: 260px;
+    padding: 24px 32px;
+  }
+
+  .screen {
+    display: none;
+  }
+
+  .screen.active {
+    display: block;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .breadcrumbs {
+    font-size: 13px;
+    color: #6B7280;
+  }
+
+  .breadcrumbs a {
+    color: #6B7280;
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: #2D7A5F;
+  }
+
+  .breadcrumbs .current {
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6B7280;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2D7A5F;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #6B7280;
+    transition: all 0.15s;
+  }
+
+  .icon-btn:hover {
+    background: #F9FAFB;
+    color: #1a1a1a;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+  }
+
+  .filters {
+    display: flex;
+    gap: 12px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover {
+    background: #F9FAFB;
+    border-color: #D1D5DB;
+  }
+
+  .filter-btn.primary {
+    background: #2D7A5F;
+    color: white;
+    border-color: #2D7A5F;
+  }
+
+  .filter-btn.primary:hover {
+    background: #246650;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #E5E7EB;
+    margin-bottom: 24px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .card-link {
+    font-size: 13px;
+    color: #2D7A5F;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .card-link:hover {
+    text-decoration: underline;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #E5E7EB;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .kpi-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: #6B7280;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .kpi-change {
+    font-size: 13px;
+    color: #2D7A5F;
+    font-weight: 600;
+  }
+
+  .kpi-change.negative {
+    color: #DC2626;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .status-badge.active { background: #E8F3EE; color: #2D7A5F; }
+  .status-badge.new { background: #FEF3C7; color: #D97706; }
+  .status-badge.done { background: #E5E7EB; color: #6B7280; }
+  .status-badge.canceled { background: #FEE2E2; color: #DC2626; }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .avatar.green { background: #E8F3EE; color: #2D7A5F; }
+  .avatar.blue { background: #DBEAFE; color: #2563EB; }
+  .avatar.purple { background: #E9D5FF; color: #9333EA; }
+  .avatar.orange { background: #FED7AA; color: #C2410C; }
+
+  .avatar.small {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .btn-primary {
+    background: #2D7A5F;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #246650;
+  }
+
+  .btn-outline {
+    background: white;
+    color: #2D7A5F;
+    border: 1px solid #2D7A5F;
+  }
+
+  .btn-outline:hover {
+    background: #E8F3EE;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: #6B7280;
+    border: 1px solid #E5E7EB;
+  }
+
+  .btn-ghost:hover {
+    background: #F3F4F6;
+  }
+
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .action-card {
+    background: white;
+    border: 2px dashed #E5E7EB;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .action-card:hover {
+    border-color: #2D7A5F;
+    background: #F9FAFB;
+  }
+
+  .action-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .action-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #E5E7EB;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -27px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #2D7A5F;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #2D7A5F;
+  }
+
+  .timeline-time {
+    font-size: 13px;
+    color: #6B7280;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .timeline-content {
+    background: #F9FAFB;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+  }
+
+  .timeline-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .timeline-subtitle {
+    font-size: 13px;
+    color: #6B7280;
+  }
+
+  .team-mini {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #F9FAFB;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .team-mini:last-child {
+    margin-bottom: 0;
+  }
+
+  .team-mini-info {
+    flex: 1;
+  }
+
+  .team-mini-name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .team-mini-stats {
+    font-size: 12px;
+    color: #6B7280;
+  }
+
+  .team-mini-profit {
+    font-weight: 700;
+    color: #2D7A5F;
+    font-size: 14px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+
+  td {
+    padding: 14px 8px;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+  }
+
+  tr:hover td {
+    background: #F9FAFB;
+  }
+
+  .team-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #E5E7EB;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .team-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  .team-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .team-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .team-info {
+    flex: 1;
+  }
+
+  .team-name {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .team-role {
+    font-size: 13px;
+    color: #6B7280;
+  }
+
+  .team-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+  }
+
+  .team-stat {
+    text-align: center;
+  }
+
+  .team-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2D7A5F;
+  }
+
+  .team-stat-label {
+    font-size: 11px;
+    color: #6B7280;
+    margin-top: 4px;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .skill-tag {
+    padding: 4px 10px;
+    background: #F3F4F6;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #4B5563;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+
+  .calendar-day-header {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+    padding: 8px;
+  }
+
+  .calendar-day {
+    aspect-ratio: 1;
+    background: #F9FAFB;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .calendar-day:hover {
+    background: #F3F4F6;
+  }
+
+  .calendar-day.today {
+    background: #E8F3EE;
+    border: 2px solid #2D7A5F;
+  }
+
+  .calendar-day-number {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .calendar-day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .calendar-event {
+    height: 4px;
+    border-radius: 2px;
+    background: #2D7A5F;
+  }
+
+  .finance-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #F3F4F6;
+  }
+
+  .finance-row:last-child {
+    border-bottom: none;
+  }
+
+  .finance-label {
+    color: #6B7280;
+  }
+
+  .finance-value {
+    font-weight: 600;
+  }
+
+  .finance-value.positive {
+    color: #2D7A5F;
+  }
+
+  .finance-value.negative {
+    color: #DC2626;
+  }
+
+  @media (max-width: 1400px) {
+    .kpi-grid, .quick-actions {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-2, .grid-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .sidebar {
+      width: 200px;
+    }
+    .main {
+      margin-left: 200px;
+    }
+  }
+</style>
 </head>
 <body>
-    <div class="mobile-frame">
-        <!-- Статус бар -->
-        <div class="status-bar">
-            <span class="time">9:41</span>
-            <div class="icons">
-                <span>📶</span>
-                <span>📡</span>
-                <span>🔋</span>
-            </div>
-        </div>
 
-        <!-- Header -->
-        <div class="app-header">
-            <div class="back-btn" onclick="navigateTo('home')">
-                <span>‹</span>
-                <span>Назад</span>
-            </div>
-            <div class="logo">
-                <div class="logo-icon">✨</div>
-                <span>Чисто.</span>
-            </div>
-        </div>
-
-        <!-- Контент -->
-        <div class="screen-content">
-            <!-- Экран 1: Новый заказ -->
-            <div class="screen active" id="screen-new-order">
-                <h1 class="screen-title">Новый заказ</h1>
-                <p class="screen-subtitle">Укажите параметры — рассчитаем стоимость.</p>
-
-                <div class="card">
-                    <h3 class="card-title">Параметры</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Площадь (кв.м)</label>
-                        <div class="input-with-unit">
-                            <input type="number" class="form-input" value="65" id="area-input">
-                            <span class="input-unit">м²</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Тип уборки</label>
-                        <div class="selector">
-                            <div class="selector-item active" onclick="selectType(this)">Стандартная</div>
-                            <div class="selector-item" onclick="selectType(this)">После ремонта</div>
-                            <div class="selector-item" onclick="selectType(this)">Генеральная</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Типы поверхностей</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-item checked">
-                                <input type="checkbox" checked>
-                                <span>Плитка</span>
-                            </label>
-                            <label class="checkbox-item checked">
-                                <input type="checkbox" checked>
-                                <span>Ламинат</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox">
-                                <span>Ковролин</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox">
-                                <span>Стекла</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Степень загрязнения</label>
-                        <div class="slider-container">
-                            <input type="range" min="1" max="3" value="2" id="pollution-slider" oninput="updateSlider(this.value)">
-                            <div class="slider-labels">
-                                <span>1 - Слабая</span>
-                                <span class="active" id="slider-label">2 - Средняя</span>
-                                <span>3 - Сильная</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Адрес</h3>
-                        <span class="text-muted">🗺 Подсказки по карте</span>
-                    </div>
-                    
-                    <input type="text" class="form-input" placeholder="Начните вводить адрес..." id="address-input" oninput="showAutocomplete(this.value)">
-                    
-                    <div class="autocomplete-list" id="autocomplete" style="display: none;">
-                        <div class="autocomplete-item" onclick="selectAddress('Лесная улица, 5', 'Москва · Тверской район')">
-                            <span class="autocomplete-icon">📍</span>
-                            <div class="autocomplete-text">
-                                <div class="autocomplete-title">Лесная улица, 5</div>
-                                <div class="autocomplete-subtitle">Москва · Тверской район</div>
-                            </div>
-                        </div>
-                        <div class="autocomplete-item" onclick="selectAddress('Лесная улица, 7', 'Москва · Тверской район')">
-                            <span class="autocomplete-icon"></span>
-                            <div class="autocomplete-text">
-                                <div class="autocomplete-title">Лесная улица, 7</div>
-                                <div class="autocomplete-subtitle">Москва · Тверской район</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="text-muted" style="margin-top: 12px;">Выберите дом из списка. Квартиру уточним позже.</p>
-                </div>
-
-                <button class="btn-primary" onclick="navigateTo('executor-selection')">
-                    Рассчитать стоимость и подобрать клинера
-                </button>
-                
-                <p class="text-muted" style="text-align: center; margin-top: 12px; font-size: 12px;">
-                    Расчёт бесплатный и ни к чему не обязывает
-                </p>
-            </div>
-
-            <!-- Экран 2: Подбор исполнителя -->
-            <div class="screen" id="screen-executor-selection">
-                <h1 class="screen-title">Подбор исполнителя</h1>
-                <p class="screen-subtitle">Выберите клинера с лучшей прибылью.</p>
-
-                <div class="card">
-                    <div class="info-row">
-                        <div>
-                            <div class="info-label">Адрес заказа</div>
-                            <div style="font-weight: 600; margin-top: 4px;">Лесная улица, 5</div>
-                            <div class="text-muted">Москва · Тверской район</div>
-                        </div>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="info-row">
-                        <div>
-                            <div class="info-label">Площадь</div>
-                            <div class="info-value" style="font-size: 20px;">65 м²</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div class="info-label">Выручка</div>
-                            <div class="info-value large">6 000 руб.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Плановые материалы</h3>
-                        <span style="color: #059669;"></span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span class="info-label">Стеклоочиститель</span>
-                        <span class="info-value">200 мл</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Шампунь</span>
-                        <span class="info-value">500 мл</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Средство для пола</span>
-                        <span class="info-value">300 мл</span>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="info-row">
-                        <span class="info-label" style="font-weight: 600;">Итого</span>
-                        <span class="info-value" style="font-size: 18px;">450 руб.</span>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 24px 0 16px;">
-                    <h3 class="section-title" style="margin: 0;">Доступные исполнители</h3>
-                    <span class="badge">2 клинера</span>
-                </div>
-                <p class="text-muted" style="margin-bottom: 16px;">По убыванию чистой прибыли</p>
-
-                <!-- Исполнитель 1 (лучший) -->
-                <div class="executor-card best">
-                    <div class="executor-badge">📈 Максимальная прибыль</div>
-                    
-                    <div class="executor-header">
-                        <div class="executor-name">
-                            <div class="executor-avatar">ИИ</div>
-                            <div class="executor-info">
-                                <h4>Иванов И.И.</h4>
-                            </div>
-                        </div>
-                        <div class="executor-rating">
-                            <span>⭐</span>
-                            <span>4.9</span>
-                        </div>
-                    </div>
-
-                    <div class="executor-stats">
-                        <span>🕐 3.5 часа</span>
-                        <span> Логистика: 120 руб.</span>
-                    </div>
-
-                    <div class="info-row" style="border: none; padding: 8px 0;">
-                        <span class="info-label">Себестоимость</span>
-                        <span class="info-value">1 850 руб.</span>
-                    </div>
-
-                    <div class="executor-profit">
-                        <div>
-                            <div class="profit-label">Чистая прибыль</div>
-                            <div class="profit-value">4 150 руб.</div>
-                        </div>
-                        <button class="btn-secondary" onclick="assignExecutor('Иванов И.И.')">Назначить</button>
-                    </div>
-                </div>
-
-                <!-- Исполнитель 2 -->
-                <div class="executor-card">
-                    <div class="executor-header">
-                        <div class="executor-name">
-                            <div class="executor-avatar" style="background: #f3f4f6; color: #6b7280;">ПП</div>
-                            <div class="executor-info">
-                                <h4>Петров П.П.</h4>
-                            </div>
-                        </div>
-                        <div class="executor-rating">
-                            <span>⭐</span>
-                            <span>4.7</span>
-                        </div>
-                    </div>
-
-                    <div class="executor-stats">
-                        <span>🕐 5 часов</span>
-                        <span>🚗 Логистика: 450 руб.</span>
-                    </div>
-
-                    <div class="info-row" style="border: none; padding: 8px 0;">
-                        <span class="info-label">Себестоимость</span>
-                        <span class="info-value">2 600 руб.</span>
-                    </div>
-
-                    <div class="executor-profit">
-                        <div>
-                            <div class="profit-label">Чистая прибыль</div>
-                            <div class="profit-value">3 400 руб.</div>
-                        </div>
-                        <button class="btn-secondary" onclick="assignExecutor('Петров П.П.')">Назначить</button>
-                    </div>
-                </div>
-
-                <!-- Исполнитель 3 (заблокирован) -->
-                <h3 class="section-title">Не подходят по навыкам</h3>
-                
-                <div class="executor-card locked">
-                    <div class="executor-header">
-                        <div class="executor-name">
-                            <div class="executor-avatar" style="background: #f3f4f6; color: #9ca3af;">СС</div>
-                            <div class="executor-info">
-                                <h4>Сидоров С.С.</h4>
-                                <div class="text-muted" style="font-size: 13px; margin-top: 2px;">Недоступен для этого заказа</div>
-                            </div>
-                        </div>
-                        <span style="font-size: 20px;">🔒</span>
-                    </div>
-
-                    <div class="lock-reason">
-                        Нет навыка работы с парогенератором. Для этого заказа нужен клинер с этим навыком.
-                    </div>
-
-                    <div class="executor-profit">
-                        <button class="btn-secondary" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>
-                            🔒 Назначить
-                        </button>
-                    </div>
-                </div>
-
-                <p class="text-muted" style="text-align: center; margin-top: 20px; font-size: 12px;">
-                    Материалы и логистика учтены в себестоимости. Чистая прибыль = выручка − себестоимость.
-                </p>
-            </div>
-
-            <!-- Экран 3: Главный (список заказов) -->
-            <div class="screen" id="screen-home">
-                <h1 class="screen-title">Заказы</h1>
-                <p class="screen-subtitle">Управление активными заказами</p>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">Заказ #1234</h3>
-                            <p class="text-muted" style="margin-top: 4px;">Лесная улица, 5 · 65 м²</p>
-                        </div>
-                        <span class="badge">В работе</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span class="info-label">Исполнитель</span>
-                        <span class="info-value">Иванов И.И.</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Чистая прибыль</span>
-                        <span class="info-value" style="color: #059669; font-size: 18px;">4 150 руб.</span>
-                    </div>
-                    
-                    <button class="btn-secondary" style="width: 100%; margin-top: 16px;">
-                        Подробнее
-                    </button>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">Заказ #1233</h3>
-                            <p class="text-muted" style="margin-top: 4px;">Пушкина улица, 10 · 120 м²</p>
-                        </div>
-                        <span class="badge" style="background: #fef3c7; color: #d97706;">Новый</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span class="info-label">Выручка</span>
-                        <span class="info-value">12 000 руб.</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Статус</span>
-                        <span class="info-value">Ожидает назначения</span>
-                    </div>
-                    
-                    <button class="btn-secondary" style="width: 100%; margin-top: 16px;" onclick="navigateTo('new-order')">
-                        Подобрать исполнителя
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Нижняя навигация -->
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="navigateTo('home')">
-                <span class="nav-icon"></span>
-                <span class="nav-label">Заказы</span>
-            </div>
-            <div class="nav-item" onclick="navigateTo('new-order')">
-                <span class="nav-icon">➕</span>
-                <span class="nav-label">Новый</span>
-            </div>
-            <div class="nav-item">
-                <span class="nav-icon"></span>
-                <span class="nav-label">Аналитика</span>
-            </div>
-            <div class="nav-item">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">Настройки</span>
-            </div>
-        </div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">✦</div>
+        <span>Чисто.</span>
+      </div>
+      <div class="workspace-selector">
+        <div class="workspace-name">Чистый дом</div>
+        <div class="workspace-sub">Санкт-Петербург · 2 филиала</div>
+      </div>
     </div>
 
-    <script>
-        // Навигация между экранами
-        function navigateTo(screenName) {
-            // Скрыть все экраны
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            // Показать нужный экран
-            const targetScreen = document.getElementById(`screen-${screenName}`);
-            if (targetScreen) {
-                targetScreen.classList.add('active');
-            }
+    <div class="sidebar-section">
+      <div class="sidebar-label">Рабочее пространство</div>
+      <div class="nav-item active" onclick="showScreen('overview')" data-screen="overview">
+        <span class="nav-icon"></span>
+        <span>Обзор</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('orders')" data-screen="orders">
+        <span class="nav-icon">📋</span>
+        <span>Заказы</span>
+        <span class="nav-badge">300</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('clients')" data-screen="clients">
+        <span class="nav-icon"></span>
+        <span>Клиенты</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('team')" data-screen="team">
+        <span class="nav-icon">👤</span>
+        <span>Команда</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('schedule')" data-screen="schedule">
+        <span class="nav-icon">📅</span>
+        <span>Расписание</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('analytics')" data-screen="analytics">
+        <span class="nav-icon">📈</span>
+        <span>Аналитика</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('finance')" data-screen="finance">
+        <span class="nav-icon">💰</span>
+        <span>Финансы</span>
+      </div>
+    </div>
 
-            // Обновить активный пункт навигации
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            if (screenName === 'home') {
-                document.querySelectorAll('.nav-item')[0].classList.add('active');
-            } else if (screenName === 'new-order') {
-                document.querySelectorAll('.nav-item')[1].classList.add('active');
-            }
-        }
+    <div class="sidebar-footer">
+      <div class="nav-item">
+        <span class="nav-icon">️</span>
+        <span>Настройки</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">❓</span>
+        <span>Помощь</span>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar">АК</div>
+        <div class="user-info">
+          <div class="user-name">Анна Ковалева</div>
+          <div class="user-role">Руководитель</div>
+        </div>
+      </div>
+    </div>
+  </aside>
 
-        // Выбор типа уборки
-        function selectType(element) {
-            document.querySelectorAll('.selector-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            element.classList.add('active');
-        }
+  <main class="main">
 
-        // Обновление слайдера
-        function updateSlider(value) {
-            const labels = ['1 - Слабая', '2 - Средняя', '3 - Сильная'];
-            document.getElementById('slider-label').textContent = labels[value - 1];
-            
-            document.querySelectorAll('.slider-labels span').forEach((span, index) => {
-                span.classList.remove('active');
-                if (index === value - 1) {
-                    span.classList.add('active');
-                }
-            });
-        }
+    <!-- ЭКРАН: ОБЗОР -->
+    <div class="screen active" id="screen-overview">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <span class="current">Рабочее пространство</span> › <span class="current">Обзор</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn">🔔</button>
+        </div>
+      </div>
 
-        // Автокомплит адреса
-        function showAutocomplete(value) {
-            const autocomplete = document.getElementById('autocomplete');
-            if (value.length > 3) {
-                autocomplete.style.display = 'block';
-            } else {
-                autocomplete.style.display = 'none';
-            }
-        }
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Обзор</h1>
+          <p class="page-subtitle">Сводная информация по всем направлениям бизнеса</p>
+        </div>
+        <div class="filters">
+          <button class="filter-btn">
+            <span>📅</span>
+            <span>Октябрь 2026</span>
+          </button>
+          <button class="filter-btn primary">
+            <span>+</span>
+            <span>Новый заказ</span>
+          </button>
+        </div>
+      </div>
 
-        function selectAddress(address, district) {
-            document.getElementById('address-input').value = address;
-            document.getElementById('autocomplete').style.display = 'none';
-        }
+      <div class="quick-actions">
+        <div class="action-card" onclick="showScreen('orders')">
+          <div class="action-icon"></div>
+          <div class="action-label">Создать заказ</div>
+        </div>
+        <div class="action-card" onclick="showScreen('team')">
+          <div class="action-icon">👤</div>
+          <div class="action-label">Добавить сотрудника</div>
+        </div>
+        <div class="action-card" onclick="showScreen('clients')">
+          <div class="action-icon"></div>
+          <div class="action-label">Новый клиент</div>
+        </div>
+        <div class="action-card" onclick="showScreen('analytics')">
+          <div class="action-icon">📊</div>
+          <div class="action-label">Отчёт за месяц</div>
+        </div>
+      </div>
 
-        // Назначение исполнителя
-        function assignExecutor(name) {
-            alert(`✅ Исполнитель ${name} назначен на заказ!\n\n📱 Уведомление отправлено клинеру\n📧 Счет отправлен клиенту`);
-            navigateTo('home');
-        }
+      <div class="kpi-grid">
+        <div class="kpi-card" onclick="showScreen('finance')">
+          <div class="kpi-label">💰 Выручка за месяц</div>
+          <div class="kpi-value">2 400 000 ₽</div>
+          <div class="kpi-change">↑ 14,3% к августу</div>
+        </div>
+        <div class="kpi-card" onclick="showScreen('finance')">
+          <div class="kpi-label">📈 Чистая прибыль</div>
+          <div class="kpi-value">720 000 ₽</div>
+          <div class="kpi-change">↑ 27,0% к августу</div>
+        </div>
+        <div class="kpi-card" onclick="showScreen('orders')">
+          <div class="kpi-label">📋 Активные заказы</div>
+          <div class="kpi-value">18</div>
+          <div class="kpi-change">6 в работе сегодня</div>
+        </div>
+        <div class="kpi-card" onclick="showScreen('team')">
+          <div class="kpi-label"> Активных сотрудников</div>
+          <div class="kpi-value">18/24</div>
+          <div class="kpi-change">75% от всех</div>
+        </div>
+      </div>
 
-        // Чекбоксы
-        document.querySelectorAll('.checkbox-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (e.target.tagName !== 'INPUT') {
-                    const checkbox = this.querySelector('input');
-                    checkbox.checked = !checkbox.checked;
-                }
-                
-                if (this.querySelector('input').checked) {
-                    this.classList.add('checked');
-                } else {
-                    this.classList.remove('checked');
-                }
-            });
-        });
-    </script>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Сегодня, 14 октября</h3>
+            <span class="card-link" onclick="showScreen('schedule')">Все назначения →</span>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">10:00</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1234 — Анна Ковалёва</div>
+                <div class="timeline-subtitle">Невский пр., 28 · Иванов И.И. · Стандартная</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">11:30</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1235 — ООО «Вектор»</div>
+                <div class="timeline-subtitle">Васильевский остров, 12 · Мария Соколова · Офис</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">14:00</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1236 — Светлана Миронова</div>
+                <div class="timeline-subtitle">Петроградская наб., 8 · Ольга Белова · После ремонта</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">16:30</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1237 — ЖК «Северная долина»</div>
+                <div class="timeline-subtitle">Мурино, ул. Шувалова, 22 · Ирина Морозова · Генеральная</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Активные заказы</h3>
+            <span class="card-link" onclick="showScreen('orders')">Все заказы →</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Клиент</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>#1234</strong></td>
+                <td>Анна Ковалёва</td>
+                <td><span class="status-badge active">В работе</span></td>
+                <td><strong>6 000 ₽</strong></td>
+              </tr>
+              <tr>
+                <td><strong>#1233</strong></td>
+                <td>ООО «Атлас»</td>
+                <td><span class="status-badge new">Новый</span></td>
+                <td><strong>23 200 ₽</strong></td>
+              </tr>
+              <tr>
+                <td><strong>#1232</strong></td>
+                <td>Елена Волкова</td>
+                <td><span class="status-badge done">Завершён</span></td>
+                <td><strong>11 400 ₽</strong></td>
+              </tr>
+              <tr>
+                <td><strong>#1231</strong></td>
+                <td>ЖК «Северная долина»</td>
+                <td><span class="status-badge done">Завершён</span></td>
+                <td><strong>28 000 ₽</strong></td>
+              </tr>
+              <tr>
+                <td><strong>#1230</strong></td>
+                <td>Дмитрий Орлов</td>
+                <td><span class="status-badge new">Новый</span></td>
+                <td><strong>8 250 ₽</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Топ исполнителей за месяц</h3>
+            <span class="card-link" onclick="showScreen('team')">Вся команда →</span>
+          </div>
+          <div class="team-mini">
+            <div class="avatar green">ИИ</div>
+            <div class="team-mini-info">
+              <div class="team-mini-name">Иванов И.И.</div>
+              <div class="team-mini-stats">42 заказа · Рейтинг 4.9</div>
+            </div>
+            <div class="team-mini-profit">113 600 ₽</div>
+          </div>
+          <div class="team-mini">
+            <div class="avatar blue">МС</div>
+            <div class="team-mini-info">
+              <div class="team-mini-name">Мария Соколова</div>
+              <div class="team-mini-stats">38 заказов · Рейтинг 4.8</div>
+            </div>
+            <div class="team-mini-profit">95 300 ₽</div>
+          </div>
+          <div class="team-mini">
+            <div class="avatar purple">ОБ</div>
+            <div class="team-mini-info">
+              <div class="team-mini-name">Ольга Белова</div>
+              <div class="team-mini-stats">31 заказ · Рейтинг 4.7</div>
+            </div>
+            <div class="team-mini-profit">75 700 ₽</div>
+          </div>
+          <div class="team-mini">
+            <div class="avatar orange">ИМ</div>
+            <div class="team-mini-info">
+              <div class="team-mini-name">Ирина Морозова</div>
+              <div class="team-mini-stats">28 заказов · Рейтинг 4.9</div>
+            </div>
+            <div class="team-mini-profit">61 600 ₽</div>
+          </div>
+          <div class="team-mini">
+            <div class="avatar green">АЛ</div>
+            <div class="team-mini-info">
+              <div class="team-mini-name">Анна Лебедева</div>
+              <div class="team-mini-stats">24 заказа · Рейтинг 4.6</div>
+            </div>
+            <div class="team-mini-profit">47 300 ₽</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Новые клиенты</h3>
+            <span class="card-link" onclick="showScreen('clients')">Все клиенты →</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Заказов</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="avatar small green">АК</div>
+                    <div>
+                      <div style="font-weight: 600;">Анна Ковалёва</div>
+                      <div style="font-size: 12px; color: #6B7280;">Частное лицо</div>
+                    </div>
+                  </div>
+                </td>
+                <td>+7 (812) 555-12-34</td>
+                <td><strong>15</strong></td>
+                <td><strong>94 500 ₽</strong></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="avatar small blue">АТ</div>
+                    <div>
+                      <div style="font-weight: 600;">ООО «Атлас»</div>
+                      <div style="font-size: 12px; color: #6B7280;">Корпоративный</div>
+                    </div>
+                  </div>
+                </td>
+                <td>+7 (812) 123-45-67</td>
+                <td><strong>42</strong></td>
+                <td><strong>487 200 ₽</strong></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="avatar small purple">ЕВ</div>
+                    <div>
+                      <div style="font-weight: 600;">Елена Волкова</div>
+                      <div style="font-size: 12px; color: #6B7280;">Частное лицо</div>
+                    </div>
+                  </div>
+                </td>
+                <td>+7 (812) 777-88-99</td>
+                <td><strong>8</strong></td>
+                <td><strong>67 800 ₽</strong></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="avatar small orange">СД</div>
+                    <div>
+                      <div style="font-weight: 600;">ЖК «Северная долина»</div>
+                      <div style="font-size: 12px; color: #6B7280;">УК</div>
+                    </div>
+                  </div>
+                </td>
+                <td>+7 (812) 987-65-43</td>
+                <td><strong>28</strong></td>
+                <td><strong>312 400 ₽</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Финансовая сводка за сентябрь</h3>
+          <span class="card-link" onclick="showScreen('finance')">Подробный отчёт →</span>
+        </div>
+        <div class="grid-3">
+          <div>
+            <div style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Выручка</div>
+            <div style="font-size: 24px; font-weight: 700; color: #2D7A5F;">+2 400 000 ₽</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Расходы</div>
+            <div style="font-size: 24px; font-weight: 700; color: #DC2626;">-1 680 000 ₽</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Чистая прибыль</div>
+            <div style="font-size: 24px; font-weight: 700; color: #2D7A5F;">720 000 ₽</div>
+          </div>
+        </div>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: #6B7280;">ФОТ (оплата труда)</span>
+            <span style="font-weight: 600;">1 008 000 ₽ (60%)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: #6B7280;">Материалы</span>
+            <span style="font-weight: 600;">252 000 ₽ (15%)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: #6B7280;">Логистика</span>
+            <span style="font-weight: 600;">168 000 ₽ (10%)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #6B7280;">Overhead</span>
+            <span style="font-weight: 600;">252 000 ₽ (15%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: ЗАКАЗЫ -->
+    <div class="screen" id="screen-orders">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <a href="#">Рабочее пространство</a> › <span class="current">Заказы</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn">🔔</button>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Заказы</h1>
+          <p class="page-subtitle">Управление всеми заказами компании</p>
+        </div>
+        <div class="filters">
+          <div class="search-box">
+            <input type="text" class="input" placeholder="Поиск по адресу или клиенту...">
+          </div>
+          <button class="filter-btn">
+            <span></span>
+            <span>Октябрь 2026</span>
+          </button>
+          <button class="filter-btn">
+            <span>🔽</span>
+            <span>Все статусы</span>
+          </button>
+          <button class="filter-btn primary">
+            <span>+</span>
+            <span>Новый заказ</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>№ Заказа</th>
+              <th>Клиент</th>
+              <th>Адрес</th>
+              <th>Тип уборки</th>
+              <th>Исполнитель</th>
+              <th>Статус</th>
+              <th>Сумма</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>#1234</strong></td>
+              <td>Анна Ковалёва</td>
+              <td>Невский пр., 28</td>
+              <td>Стандартная</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="avatar green">ИИ</div>
+                  <span>Иванов И.И.</span>
+                </div>
+              </td>
+              <td><span class="status-badge active">В работе</span></td>
+              <td><strong>6 000 ₽</strong></td>
+              <td><button class="btn btn-ghost">Открыть</button></td>
+            </tr>
+            <tr>
+              <td><strong>#1233</strong></td>
+              <td>ООО «Атлас»</td>
+              <td>Васильевский остров, 12</td>
+              <td>Уборка офиса</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="avatar blue">МС</div>
+                  <span>Мария Соколова</span>
+                </div>
+              </td>
+              <td><span class="status-badge new">Новый</span></td>
+              <td><strong>23 200 ₽</strong></td>
+              <td><button class="btn btn-ghost">Открыть</button></td>
+            </tr>
+            <tr>
+              <td><strong>#1232</strong></td>
+              <td>Елена Волкова</td>
+              <td>Петроградская наб., 10</td>
+              <td>Генеральная</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="avatar purple">ОБ</div>
+                  <span>Ольга Белова</span>
+                </div>
+              </td>
+              <td><span class="status-badge done">Завершён</span></td>
+              <td><strong>11 400 ₽</strong></td>
+              <td><button class="btn btn-ghost">Открыть</button></td>
+            </tr>
+            <tr>
+              <td><strong>#1231</strong></td>
+              <td>ЖК «Северная долина»</td>
+              <td>Мурино, ул. Шувалова, 22</td>
+              <td>После ремонта</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="avatar orange">ИМ</div>
+                  <span>Ирина Морозова</span>
+                </div>
+              </td>
+              <td><span class="status-badge done">Завершён</span></td>
+              <td><strong>28 000 ₽</strong></td>
+              <td><button class="btn btn-ghost">Открыть</button></td>
+            </tr>
+            <tr>
+              <td><strong>#1230</strong></td>
+              <td>Дмитрий Орлов</td>
+              <td>Лиговский пр., 15</td>
+              <td>Генеральная</td>
+              <td>—</td>
+              <td><span class="status-badge new">Новый</span></td>
+              <td><strong>8 250 ₽</strong></td>
+              <td><button class="btn btn-ghost">Открыть</button></td>
+            </tr>
+            <tr>
+              <td><strong>#1229</strong></td>
+              <td>Студия «Форма»</td>
+              <td>Московский пр., 8</td>
+              <td>Уборка офиса</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="avatar green">АЛ</div>
+                  <span>Анна Лебедева</span>
+                </div>
+              </td>
+              <td><span class="status-badge canceled">Отменён</span></td>
+              <td><strong>16 200 ₽</strong></td>
+              <td><button class="btn btn-ghost">Открыть</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+        <div style="color: #6B7280; font-size: 14px;">
+          Показано 6 из 300 заказов
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-ghost">← Назад</button>
+          <button class="btn btn-primary">Вперёд →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: КЛИЕНТЫ -->
+    <div class="screen" id="screen-clients">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <a href="#">Рабочее пространство</a> › <span class="current">Клиенты</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn"></button>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Клиенты</h1>
+          <p class="page-subtitle">База клиентов компании</p>
+        </div>
+        <div class="filters">
+          <div class="search-box">
+            <input type="text" class="input" placeholder="Поиск по имени или телефону...">
+          </div>
+          <button class="filter-btn primary">
+            <span>+</span>
+            <span>Добавить клиента</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 24px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Всего клиентов</div>
+          <div class="kpi-value">247</div>
+          <div class="kpi-change">↑ 12 за месяц</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Активные</div>
+          <div class="kpi-value">189</div>
+          <div class="kpi-change">76% от всех</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Новые за месяц</div>
+          <div class="kpi-value">23</div>
+          <div class="kpi-change">↑ 8% к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Средний чек</div>
+          <div class="kpi-value">8 450 ₽</div>
+          <div class="kpi-change">↑ 6.7% к августу</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Клиент</th>
+              <th>Телефон</th>
+              <th>Email</th>
+              <th>Заказов</th>
+              <th>Последний заказ</th>
+              <th>Общая сумма</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar green">АК</div>
+                  <div>
+                    <div style="font-weight: 600;">Анна Ковалёва</div>
+                    <div style="font-size: 12px; color: #6B7280;">Частное лицо</div>
+                  </div>
+                </div>
+              </td>
+              <td>+7 (812) 555-12-34</td>
+              <td>anna.k@mail.ru</td>
+              <td><strong>15</strong></td>
+              <td>14 окт 2026</td>
+              <td><strong>94 500 ₽</strong></td>
+              <td><button class="btn btn-ghost">Профиль</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar blue">АТ</div>
+                  <div>
+                    <div style="font-weight: 600;">ООО «Атлас»</div>
+                    <div style="font-size: 12px; color: #6B7280;">Корпоративный</div>
+                  </div>
+                </div>
+              </td>
+              <td>+7 (812) 123-45-67</td>
+              <td>office@atlas.ru</td>
+              <td><strong>42</strong></td>
+              <td>13 окт 2026</td>
+              <td><strong>487 200 ₽</strong></td>
+              <td><button class="btn btn-ghost">Профиль</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar purple">ЕВ</div>
+                  <div>
+                    <div style="font-weight: 600;">Елена Волкова</div>
+                    <div style="font-size: 12px; color: #6B7280;">Частное лицо</div>
+                  </div>
+                </div>
+              </td>
+              <td>+7 (812) 777-88-99</td>
+              <td>elena.v@gmail.com</td>
+              <td><strong>8</strong></td>
+              <td>12 окт 2026</td>
+              <td><strong>67 800 ₽</strong></td>
+              <td><button class="btn btn-ghost">Профиль</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar orange">СД</div>
+                  <div>
+                    <div style="font-weight: 600;">ЖК «Северная долина»</div>
+                    <div style="font-size: 12px; color: #6B7280;">Управляющая компания</div>
+                  </div>
+                </div>
+              </td>
+              <td>+7 (812) 987-65-43</td>
+              <td>info@severnaya.ru</td>
+              <td><strong>28</strong></td>
+              <td>11 окт 2026</td>
+              <td><strong>312 400 ₽</strong></td>
+              <td><button class="btn btn-ghost">Профиль</button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar green">СФ</div>
+                  <div>
+                    <div style="font-weight: 600;">Студия «Форма»</div>
+                    <div style="font-size: 12px; color: #6B7280;">Корпоративный</div>
+                  </div>
+                </div>
+              </td>
+              <td>+7 (812) 234-56-78</td>
+              <td>admin@forma.studio</td>
+              <td><strong>19</strong></td>
+              <td>10 окт 2026</td>
+              <td><strong>156 900 ₽</strong></td>
+              <td><button class="btn btn-ghost">Профиль</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: КОМАНДА -->
+    <div class="screen" id="screen-team">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <a href="#">Рабочее пространство</a> › <span class="current">Команда</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn">🔔</button>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Команда</h1>
+          <p class="page-subtitle">Управление исполнителями и их навыками</p>
+        </div>
+        <div class="filters">
+          <div class="search-box">
+            <input type="text" class="input" placeholder="Поиск по имени...">
+          </div>
+          <button class="filter-btn">
+            <span>🔽</span>
+            <span>Все навыки</span>
+          </button>
+          <button class="filter-btn primary">
+            <span>+</span>
+            <span>Добавить сотрудника</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 24px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Всего сотрудников</div>
+          <div class="kpi-value">24</div>
+          <div class="kpi-change">↑ 2 за месяц</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Активных сейчас</div>
+          <div class="kpi-value">18</div>
+          <div class="kpi-change">75% от всех</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Средний рейтинг</div>
+          <div class="kpi-value">4.8</div>
+          <div class="kpi-change">↑ 0.2 к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Заказов выполнено</div>
+          <div class="kpi-value">1 247</div>
+          <div class="kpi-change">↑ 14% к августу</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="team-card">
+          <div class="team-header">
+            <div class="team-avatar" style="background: #E8F3EE; color: #2D7A5F;">ИИ</div>
+            <div class="team-info">
+              <div class="team-name">Иванов Иван Иванович</div>
+              <div class="team-role">Старший клинер</div>
+            </div>
+          </div>
+          <div class="skills-list">
+            <span class="skill-tag">Стандартная</span>
+            <span class="skill-tag">После ремонта</span>
+            <span class="skill-tag">Парогенератор</span>
+          </div>
+          <div class="team-stats">
+            <div class="team-stat">
+              <div class="team-stat-value">142</div>
+              <div class="team-stat-label">Заказа</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">4.9</div>
+              <div class="team-stat-label">Рейтинг</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">1.3×</div>
+              <div class="team-stat-label">Скорость</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-header">
+            <div class="team-avatar" style="background: #DBEAFE; color: #2563EB;">МС</div>
+            <div class="team-info">
+              <div class="team-name">Мария Соколова</div>
+              <div class="team-role">Клинер</div>
+            </div>
+          </div>
+          <div class="skills-list">
+            <span class="skill-tag">Стандартная</span>
+            <span class="skill-tag">Офисы</span>
+            <span class="skill-tag">Химчистка</span>
+          </div>
+          <div class="team-stats">
+            <div class="team-stat">
+              <div class="team-stat-value">98</div>
+              <div class="team-stat-label">Заказа</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">4.8</div>
+              <div class="team-stat-label">Рейтинг</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">1.2×</div>
+              <div class="team-stat-label">Скорость</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-header">
+            <div class="team-avatar" style="background: #E9D5FF; color: #9333EA;">ОБ</div>
+            <div class="team-info">
+              <div class="team-name">Ольга Белова</div>
+              <div class="team-role">Клинер</div>
+            </div>
+          </div>
+          <div class="skills-list">
+            <span class="skill-tag">Генеральная</span>
+            <span class="skill-tag">После ремонта</span>
+          </div>
+          <div class="team-stats">
+            <div class="team-stat">
+              <div class="team-stat-value">76</div>
+              <div class="team-stat-label">Заказа</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">4.7</div>
+              <div class="team-stat-label">Рейтинг</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">1.1×</div>
+              <div class="team-stat-label">Скорость</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-header">
+            <div class="team-avatar" style="background: #FED7AA; color: #C2410C;">ИМ</div>
+            <div class="team-info">
+              <div class="team-name">Ирина Морозова</div>
+              <div class="team-role">Клинер</div>
+            </div>
+          </div>
+          <div class="skills-list">
+            <span class="skill-tag">После ремонта</span>
+            <span class="skill-tag">Офисы</span>
+            <span class="skill-tag">Стекла</span>
+          </div>
+          <div class="team-stats">
+            <div class="team-stat">
+              <div class="team-stat-value">64</div>
+              <div class="team-stat-label">Заказа</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">4.9</div>
+              <div class="team-stat-label">Рейтинг</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">1.2×</div>
+              <div class="team-stat-label">Скорость</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-header">
+            <div class="team-avatar" style="background: #E8F3EE; color: #2D7A5F;">АЛ</div>
+            <div class="team-info">
+              <div class="team-name">Анна Лебедева</div>
+              <div class="team-role">Клинер</div>
+            </div>
+          </div>
+          <div class="skills-list">
+            <span class="skill-tag">Стандартная</span>
+            <span class="skill-tag">Генеральная</span>
+          </div>
+          <div class="team-stats">
+            <div class="team-stat">
+              <div class="team-stat-value">52</div>
+              <div class="team-stat-label">Заказа</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">4.6</div>
+              <div class="team-stat-label">Рейтинг</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">1.0×</div>
+              <div class="team-stat-label">Скорость</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-header">
+            <div class="team-avatar" style="background: #DBEAFE; color: #2563EB;">ЕЗ</div>
+            <div class="team-info">
+              <div class="team-name">Екатерина Зайцева</div>
+              <div class="team-role">Клинер</div>
+            </div>
+          </div>
+          <div class="skills-list">
+            <span class="skill-tag">После ремонта</span>
+            <span class="skill-tag">Поддерживающая</span>
+          </div>
+          <div class="team-stats">
+            <div class="team-stat">
+              <div class="team-stat-value">41</div>
+              <div class="team-stat-label">Заказа</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">4.8</div>
+              <div class="team-stat-label">Рейтинг</div>
+            </div>
+            <div class="team-stat">
+              <div class="team-stat-value">1.1×</div>
+              <div class="team-stat-label">Скорость</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: РАСПИСАНИЕ -->
+    <div class="screen" id="screen-schedule">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <a href="#">Рабочее пространство</a> › <span class="current">Расписание</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn">🔔</button>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Расписание</h1>
+          <p class="page-subtitle">Календарь назначений на октябрь 2026</p>
+        </div>
+        <div class="filters">
+          <button class="filter-btn">
+            <span>◀</span>
+          </button>
+          <button class="filter-btn">
+            <span>Октябрь 2026</span>
+          </button>
+          <button class="filter-btn">
+            <span>▶</span>
+          </button>
+          <button class="filter-btn primary">
+            <span>+</span>
+            <span>Новое назначение</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="calendar-header">
+            <h3 class="card-title">Календарь</h3>
+            <div class="calendar-nav">
+              <button class="btn btn-ghost">Сегодня</button>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-day-header">Пн</div>
+            <div class="calendar-day-header">Вт</div>
+            <div class="calendar-day-header">Ср</div>
+            <div class="calendar-day-header">Чт</div>
+            <div class="calendar-day-header">Пт</div>
+            <div class="calendar-day-header">Сб</div>
+            <div class="calendar-day-header">Вс</div>
+
+            <div class="calendar-day"><div class="calendar-day-number">1</div></div>
+            <div class="calendar-day"><div class="calendar-day-number">2</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">3</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">4</div></div>
+            <div class="calendar-day"><div class="calendar-day-number">5</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">6</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">7</div></div>
+            <div class="calendar-day"><div class="calendar-day-number">8</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">9</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">10</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">11</div></div>
+            <div class="calendar-day"><div class="calendar-day-number">12</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">13</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day today"><div class="calendar-day-number">14</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">15</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">16</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">17</div></div>
+            <div class="calendar-day"><div class="calendar-day-number">18</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">19</div><div class="calendar-day-events"><div class="calendar-event"></div><div class="calendar-event"></div></div></div>
+            <div class="calendar-day"><div class="calendar-day-number">20</div></div>
+            <div class="calendar-day"><div class="calendar-day-number">21</div><div class="calendar-day-events"><div class="calendar-event"></div></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom: 20px;">Сегодня, 14 октября</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">10:00</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1234 — Анна Ковалёва</div>
+                <div class="timeline-subtitle">Невский пр., 28 · Иванов И.И. · Стандартная</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">11:30</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1235 — ООО «Вектор»</div>
+                <div class="timeline-subtitle">Васильевский остров, 12 · Мария Соколова · Офис</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">14:00</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1236 — Светлана Миронова</div>
+                <div class="timeline-subtitle">Петроградская наб., 8 · Ольга Белова · После ремонта</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">16:30</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Заказ #1237 — ЖК «Северная долина»</div>
+                <div class="timeline-subtitle">Мурино, ул. Шувалова, 22 · Ирина Морозова · Генеральная</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: АНАЛИТИКА -->
+    <div class="screen" id="screen-analytics">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <a href="#">Рабочее пространство</a> › <span class="current">Аналитика</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn"></button>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Дашборд аналитики</h1>
+          <p class="page-subtitle">Финансовый результат и эффективность заказов</p>
+        </div>
+        <div class="filters">
+          <button class="filter-btn">
+            <span>🏢</span>
+            <span>Все филиалы</span>
+          </button>
+          <button class="filter-btn">
+            <span>📅</span>
+            <span>Сентябрь 2026</span>
+          </button>
+          <button class="filter-btn primary">
+            <span></span>
+            <span>Скачать отчёт</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 24px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Выручка за месяц</div>
+          <div class="kpi-value">2 400 000 ₽</div>
+          <div class="kpi-change">↑ 14,3% к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Чистая прибыль</div>
+          <div class="kpi-value">720 000 ₽</div>
+          <div class="kpi-change">↑ 27,0% к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Рентабельность</div>
+          <div class="kpi-value">30,0%</div>
+          <div class="kpi-change">↑ 3,0 п.п. к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Средний чек</div>
+          <div class="kpi-value">8 000 ₽</div>
+          <div class="kpi-change">↑ 6,7% к августу</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Выручка vs Себестоимость vs ЧП</h3>
+            <p style="font-size: 13px; color: #6B7280; margin-top: 4px;">По календарным неделям · тыс. ₽</p>
+          </div>
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <div style="display: flex; gap: 16px; font-size: 13px; color: #6B7280;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 10px; height: 10px; background: #5B8DB8; border-radius: 2px;"></div>
+                <span>Выручка</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 10px; height: 10px; background: #B8C5D6; border-radius: 2px;"></div>
+                <span>Себестоимость</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 10px; height: 10px; background: #2D7A5F; border-radius: 2px;"></div>
+                <span>Чистая прибыль</span>
+              </div>
+            </div>
+            <div style="display: flex; background: #F3F4F6; border-radius: 8px; padding: 3px;">
+              <button class="btn btn-ghost" style="padding: 6px 14px;">Недели</button>
+              <button class="btn btn-ghost" style="padding: 6px 14px; background: white;">Дни</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 240px; padding: 20px 0; border-bottom: 1px solid #E5E7EB;">
+          <div style="display: flex; gap: 6px; align-items: flex-end;">
+            <div style="width: 24px; height: 105px; background: #5B8DB8; border-radius: 4px 4px 0 0; position: relative;">
+              <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #6B7280;">420</div>
+            </div>
+            <div style="width: 24px; height: 73px; background: #B8C5D6; border-radius: 4px 4px 0 0;"></div>
+            <div style="width: 24px; height: 32px; background: #2D7A5F; border-radius: 4px 4px 0 0;"></div>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: flex-end;">
+            <div style="width: 24px; height: 125px; background: #5B8DB8; border-radius: 4px 4px 0 0; position: relative;">
+              <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #6B7280;">500</div>
+            </div>
+            <div style="width: 24px; height: 87px; background: #B8C5D6; border-radius: 4px 4px 0 0;"></div>
+            <div style="width: 24px; height: 38px; background: #2D7A5F; border-radius: 4px 4px 0 0;"></div>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: flex-end;">
+            <div style="width: 24px; height: 140px; background: #5B8DB8; border-radius: 4px 4px 0 0; position: relative;">
+              <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #6B7280;">560</div>
+            </div>
+            <div style="width: 24px; height: 98px; background: #B8C5D6; border-radius: 4px 4px 0 0;"></div>
+            <div style="width: 24px; height: 42px; background: #2D7A5F; border-radius: 4px 4px 0 0;"></div>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: flex-end;">
+            <div style="width: 24px; height: 155px; background: #5B8DB8; border-radius: 4px 4px 0 0; position: relative;">
+              <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #6B7280;">620</div>
+            </div>
+            <div style="width: 24px; height: 108px; background: #B8C5D6; border-radius: 4px 4px 0 0;"></div>
+            <div style="width: 24px; height: 47px; background: #2D7A5F; border-radius: 4px 4px 0 0;"></div>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: flex-end;">
+            <div style="width: 24px; height: 75px; background: #5B8DB8; border-radius: 4px 4px 0 0; position: relative;">
+              <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #6B7280;">300</div>
+            </div>
+            <div style="width: 24px; height: 52px; background: #B8C5D6; border-radius: 4px 4px 0 0;"></div>
+            <div style="width: 24px; height: 23px; background: #2D7A5F; border-radius: 4px 4px 0 0;"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-around; margin-top: 12px; font-size: 13px; color: #6B7280;">
+          <span>1–6 сентября</span>
+          <span>7–13 сентября</span>
+          <span>14–20 сентября</span>
+          <span>21–27 сентября</span>
+          <span>28–30 сентября</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; padding: 16px 0 0; margin-top: 16px; border-top: 1px solid #F3F4F6; font-size: 13px; color: #6B7280;">
+          <span>За месяц: выручка 2 400 000 ₽ · себестоимость 1 680 000 ₽</span>
+          <span style="color: #2D7A5F; font-weight: 700;">Чистая прибыль 720 000 ₽</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: ФИНАНСЫ -->
+    <div class="screen" id="screen-finance">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <a href="#">Рабочее пространство</a> › <span class="current">Финансы</span>
+        </div>
+        <div class="top-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Обновлено сегодня, 09:41</span>
+          </div>
+          <button class="icon-btn">🔔</button>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Финансы</h1>
+          <p class="page-subtitle">Детализированные финансовые отчеты</p>
+        </div>
+        <div class="filters">
+          <button class="filter-btn">
+            <span>📅</span>
+            <span>Сентябрь 2026</span>
+          </button>
+          <button class="filter-btn primary">
+            <span>⬇</span>
+            <span>Экспорт в Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 24px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Общая выручка</div>
+          <div class="kpi-value">2 400 000 ₽</div>
+          <div class="kpi-change">↑ 14,3% к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Расходы всего</div>
+          <div class="kpi-value" style="color: #DC2626;">1 680 000 ₽</div>
+          <div class="kpi-change" style="color: #DC2626;">↑ 8,2% к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Чистая прибыль</div>
+          <div class="kpi-value">720 000 ₽</div>
+          <div class="kpi-change">↑ 27,0% к августу</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Налоги</div>
+          <div class="kpi-value">108 000 ₽</div>
+          <div class="kpi-change">6% от выручки</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 class="card-title">Структура расходов</h3>
+          <div class="finance-row">
+            <span class="finance-label">ФОТ (оплата труда)</span>
+            <span class="finance-value">1 008 000 ₽</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-label">Материалы</span>
+            <span class="finance-value">252 000 ₽</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-label">Логистика</span>
+            <span class="finance-value">168 000 ₽</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-label">Overhead (аренда, управление)</span>
+            <span class="finance-value">252 000 ₽</span>
+          </div>
+          <div class="finance-row" style="border-top: 2px solid #E5E7EB; margin-top: 12px; padding-top: 16px;">
+            <span class="finance-label" style="font-weight: 700; color: #1a1a1a;">Итого расходов</span>
+            <span class="finance-value" style="font-size: 18px;">1 680 000 ₽</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Финансовый результат</h3>
+          <div class="finance-row">
+            <span class="finance-label">Выручка</span>
+            <span class="finance-value positive">+2 400 000 ₽</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-label">Себестоимость</span>
+            <span class="finance-value negative">-1 680 000 ₽</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-label">Валовая прибыль</span>
+            <span class="finance-value positive">720 000 ₽</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-label">Налоги (6%)</span>
+            <span class="finance-value negative">-108 000 ₽</span>
+          </div>
+          <div class="finance-row" style="border-top: 2px solid #E5E7EB; margin-top: 12px; padding-top: 16px;">
+            <span class="finance-label" style="font-weight: 700; color: #1a1a1a;">Чистая прибыль</span>
+            <span class="finance-value positive" style="font-size: 18px;">612 000 ₽</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Топ-5 исполнителей по прибыли</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Исполнитель</th>
+              <th>Заказов</th>
+              <th>Выручка</th>
+              <th>Себестоимость</th>
+              <th>Чистая прибыль</th>
+              <th>Рентабельность</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar green">ИИ</div>
+                  <span style="font-weight: 600;">Иванов И.И.</span>
+                </div>
+              </td>
+              <td>42</td>
+              <td>312 000 ₽</td>
+              <td>198 400 ₽</td>
+              <td class="finance-value positive">113 600 ₽</td>
+              <td><span class="status-badge active">36.4%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar blue">МС</div>
+                  <span style="font-weight: 600;">Мария Соколова</span>
+                </div>
+              </td>
+              <td>38</td>
+              <td>284 500 ₽</td>
+              <td>189 200 ₽</td>
+              <td class="finance-value positive">95 300 ₽</td>
+              <td><span class="status-badge active">33.5%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar purple">ОБ</div>
+                  <span style="font-weight: 600;">Ольга Белова</span>
+                </div>
+              </td>
+              <td>31</td>
+              <td>247 800 ₽</td>
+              <td>172 100 ₽</td>
+              <td class="finance-value positive">75 700 ₽</td>
+              <td><span class="status-badge active">30.5%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar orange">ИМ</div>
+                  <span style="font-weight: 600;">Ирина Морозова</span>
+                </div>
+              </td>
+              <td>28</td>
+              <td>218 400 ₽</td>
+              <td>156 800 ₽</td>
+              <td class="finance-value positive">61 600 ₽</td>
+              <td><span class="status-badge active">28.2%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar green">АЛ</div>
+                  <span style="font-weight: 600;">Анна Лебедева</span>
+                </div>
+              </td>
+              <td>24</td>
+              <td>189 600 ₽</td>
+              <td>142 300 ₽</td>
+              <td class="finance-value positive">47 300 ₽</td>
+              <td><span class="status-badge active">24.9%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function showScreen(screenName) {
+    document.querySelectorAll('.screen').forEach(screen => {
+      screen.classList.remove('active');
+    });
+    
+    const targetScreen = document.getElementById('screen-' + screenName);
+    if (targetScreen) {
+      targetScreen.classList.add('active');
+    }
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    const activeNav = document.querySelector(`.nav-item[data-screen="${screenName}"]`);
+    if (activeNav) {
+      activeNav.classList.add('active');
+    }
+  }
+</script>
+
 </body>
 </html>
